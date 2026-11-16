@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 ADM4 = "33.72.04.1010"
 URL = f"https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4={ADM4}"
 FILE = "data/jebres_forecast.csv"
-  os.makedirs("data", exist_ok=True)
+os.makedirs("data", exist_ok=True)
 KUNCI = ["adm4", "utc_datetime", "analysis_date"]
 
 
