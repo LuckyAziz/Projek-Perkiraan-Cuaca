@@ -28,11 +28,11 @@ Workflow juga bisa dijalankan manual lewat tab Actions.
 
 | Folder/File | Isi | Pemilik |
 |---|---|---|
-| `data/` | CSV hasil pengambilan (jangan diedit manual) | Robot + [Anggota A] |
-| `ambil_data.py` | Skrip pengambilan data | [Anggota A] |
-| `.github/workflows/` | Jadwal otomatis | [Anggota A] |
-| `notebooks/` | EDA dan modeling | [Anggota B] |
-| `app/`, `docs/` | Demo, laporan, slide | [Anggota C] |
+| `data/` | CSV hasil pengambilan (jangan diedit manual) | Lucky |
+| `ambil_data.py` | Skrip pengambilan data | Lucky |
+| `.github/workflows/` | Jadwal otomatis | Lucky |
+| `notebooks/` | EDA dan modeling | Dustin |
+| `app/`, `docs/` | Demo, laporan, slide | Julian |
 
 ## Kamus Data (`data/jebres_forecast.csv`)
 
