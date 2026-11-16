@@ -1,17 +1,21 @@
 import os
+import time
 import requests
 import pandas as pd
 from datetime import datetime, timezone
 
-ADM4 = "33.72.04.1010"
-URL = f"https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4={ADM4}"
+LOKASI = [
+    "33.72.04.1010",  # Jebres
+    "33.72.04.1011",  # Mojosongo 
+    "33.72.04.1006",  # Pucangsawit 
+]
 FILE = "data/jebres_forecast.csv"
-os.makedirs("data", exist_ok=True)
 KUNCI = ["adm4", "utc_datetime", "analysis_date"]
 
 
-def ambil_data():
-    resp = requests.get(URL, timeout=30)
+def ambil_satu(adm4):
+    url = f"https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4={adm4}"
+    resp = requests.get(url, timeout=30)
     resp.raise_for_status()
     data = resp.json()
 
@@ -41,20 +45,30 @@ def ambil_data():
 
 
 def simpan(df_baru):
+    os.makedirs(os.path.dirname(FILE), exist_ok=True)
     if os.path.exists(FILE):
-        lama = pd.read_csv(FILE)
-        gabung = pd.concat([lama, df_baru], ignore_index=True)
+        gabung = pd.concat([pd.read_csv(FILE), df_baru], ignore_index=True)
     else:
         gabung = df_baru
-
     sebelum = len(gabung)
     gabung = gabung.drop_duplicates(subset=KUNCI, keep="first")
     gabung.to_csv(FILE, index=False)
-    print(f"Baru diambil: {len(df_baru)} | duplikat dibuang: {sebelum - len(gabung)} | total di file: {len(gabung)}")
+    print(f"Baru: {len(df_baru)} | duplikat dibuang: {sebelum - len(gabung)} | total: {len(gabung)}")
 
 
 if __name__ == "__main__":
-    df = ambil_data()
-    if df.empty:
-        raise SystemExit("Data kosong, tidak disimpan.")
-    simpan(df)
+    hasil, gagal = [], []
+    for kode in LOKASI:
+        try:
+            df = ambil_satu(kode)
+            print(f"OK {kode}: {len(df)} baris")
+            hasil.append(df)
+        except Exception as e:
+            print(f"GAGAL {kode}: {e}")
+            gagal.append(kode)
+        time.sleep(2)  # jeda sopan agar tidak melewati batas request
+
+    if hasil:
+        simpan(pd.concat(hasil, ignore_index=True))
+    if gagal:
+        raise SystemExit(f"Lokasi gagal: {gagal}")
